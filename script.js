@@ -51,3 +51,34 @@ toggleBtn.addEventListener("click", () => {
     document.body.classList.toggle("dark");
     toggleBtn.textContent = document.body.classList.contains("dark") ? "☀️" : "🌙";
 });
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+
+// Scroll Reveal
+function revealOnScroll() {
+    const reveals = document.querySelectorAll('.reveal');
+    for (let i = 0; i < reveals.length; i++) {
+        let windowHeight = window.innerHeight;
+        let elementTop = reveals[i].getBoundingClientRect().top;
+        let revealPoint = 100;
+        if (elementTop < windowHeight - revealPoint) {
+            reveals[i].classList.add('active');
+        }
+    }
+}
+window.addEventListener('scroll', revealOnScroll);
+revealOnScroll();
+
+// Parallax Effect
+window.addEventListener("scroll", function () {
+    document.querySelectorAll("section").forEach(sec => {
+        let speed = 0.4;
+        sec.style.backgroundPositionY = -(window.scrollY * speed) + "px";
+    });
+});
