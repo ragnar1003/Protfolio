@@ -1,84 +1,48 @@
-// Smooth Scroll
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        document.querySelector(this.getAttribute('href')).scrollIntoView({
-            behavior: 'smooth'
-        });
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const t = document.querySelector(a.getAttribute('href'));
+      if (!t) return;
+      t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.querySelectorAll('nav a').forEach(x => x.classList.remove('active'));
+      a.classList.add('active');
     });
-});
+  });
 
-// Scroll Reveal Animations
-const revealElements = document.querySelectorAll("section, .education-card, .experience-card, .project-card, .skill-category");
-
-const revealOnScroll = () => {
-    let triggerBottom = window.innerHeight * 0.85;
-    revealElements.forEach(el => {
-        let boxTop = el.getBoundingClientRect().top;
-        if (boxTop < triggerBottom) {
-            el.style.opacity = "1";
-            el.style.transform = "translateY(0)";
-        }
+  const revealElems = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('show'); observer.unobserve(e.target); }
     });
-};
+  }, { threshold: 0.12 });
+  revealElems.forEach(el => observer.observe(el));
 
-revealElements.forEach(el => {
-    el.style.opacity = "0";
-    el.style.transform = "translateY(40px)";
-    el.style.transition = "opacity 0.8s ease, transform 0.8s ease";
-});
+  const toggle = document.getElementById('theme-toggle');
+  const saved = localStorage.getItem('site-theme');
+  if (saved === 'light') document.body.classList.add('light');
+  const updateToggle = () => { toggle.textContent = document.body.classList.contains('light') ? '🌞' : '🌙'; }
+  updateToggle();
+  toggle.addEventListener('click', () => {
+    document.body.classList.toggle('light');
+    localStorage.setItem('site-theme', document.body.classList.contains('light') ? 'light' : 'dark');
+    updateToggle();
+  });
 
-window.addEventListener("scroll", revealOnScroll);
-revealOnScroll();
-
-// Theme Toggle
-const toggleBtn = document.createElement("button");
-toggleBtn.textContent = "🌙";
-toggleBtn.style.position = "fixed";
-toggleBtn.style.bottom = "20px";
-toggleBtn.style.right = "20px";
-toggleBtn.style.padding = "10px";
-toggleBtn.style.borderRadius = "50%";
-toggleBtn.style.border = "none";
-toggleBtn.style.cursor = "pointer";
-toggleBtn.style.fontSize = "20px";
-toggleBtn.style.background = "#00c3ff";
-toggleBtn.style.color = "#fff";
-toggleBtn.style.boxShadow = "0 4px 8px rgba(0,0,0,0.3)";
-document.body.appendChild(toggleBtn);
-
-toggleBtn.addEventListener("click", () => {
-    document.body.classList.toggle("dark");
-    toggleBtn.textContent = document.body.classList.contains("dark") ? "☀️" : "🌙";
-});
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        document.querySelector(this.getAttribute('href')).scrollIntoView({
-            behavior: 'smooth'
-        });
+  const sections = document.querySelectorAll('section[id]');
+  window.addEventListener('scroll', () => {
+    const y = window.pageYOffset;
+    sections.forEach(sec => {
+      const top = sec.offsetTop - 140; const bottom = top + sec.offsetHeight; const id = sec.getAttribute('id');
+      const link = document.querySelector(`nav a[href="#${id}"]`);
+      if (!link) return; if (y >= top && y < bottom) { document.querySelectorAll('nav a').forEach(x => x.classList.remove('active')); link.classList.add('active'); }
     });
+  });
 });
 
-// Scroll Reveal
-function revealOnScroll() {
-    const reveals = document.querySelectorAll('.reveal');
-    for (let i = 0; i < reveals.length; i++) {
-        let windowHeight = window.innerHeight;
-        let elementTop = reveals[i].getBoundingClientRect().top;
-        let revealPoint = 100;
-        if (elementTop < windowHeight - revealPoint) {
-            reveals[i].classList.add('active');
-        }
-    }
-}
-window.addEventListener('scroll', revealOnScroll);
-revealOnScroll();
-
-// Parallax Effect
-window.addEventListener("scroll", function () {
-    document.querySelectorAll("section").forEach(sec => {
-        let speed = 0.4;
-        sec.style.backgroundPositionY = -(window.scrollY * speed) + "px";
-    });
-});
+(function(){
+  const canvas = document.getElementById('bg-canvas'); if (!canvas) return; const ctx = canvas.getContext('2d'); let w = canvas.width = innerWidth; let h = canvas.height = innerHeight; const dpi = window.devicePixelRatio || 1; canvas.width = w * dpi; canvas.height = h * dpi; canvas.style.width = w + 'px'; canvas.style.height = h + 'px'; ctx.scale(dpi, dpi);
+  window.addEventListener('resize', () => { w = canvas.width = innerWidth; h = canvas.height = innerHeight; canvas.width = w * dpi; canvas.height = h * dpi; canvas.style.width = w + 'px'; canvas.style.height = h + 'px'; ctx.scale(dpi, dpi); });
+  const particles = []; const count = Math.max(40, Math.floor((w*h) / 60000));
+  for (let i=0;i<count;i++){ particles.push({ x: Math.random()*w, y: Math.random()*h, r: 0.8 + Math.random()*1.8, vx: (Math.random()-0.5)*0.2, vy: (Math.random()-0.5)*0.2, hue: 200 + Math.random()*60 }); }
+  function loop(){ ctx.clear
