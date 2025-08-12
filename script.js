@@ -31,12 +31,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const sections = document.querySelectorAll('section[id]');
   window.addEventListener('scroll', () => {
+    const header = document.querySelector('header');
+    if (window.scrollY > 50) {
+        header.classList.add('scrolled');
+    } else {
+        header.classList.remove('scrolled');
+    }
+
     const y = window.pageYOffset;
     sections.forEach(sec => {
       const top = sec.offsetTop - 140; const bottom = top + sec.offsetHeight; const id = sec.getAttribute('id');
       const link = document.querySelector(`nav a[href="#${id}"]`);
       if (!link) return; if (y >= top && y < bottom) { document.querySelectorAll('nav a').forEach(x => x.classList.remove('active')); link.classList.add('active'); }
     });
+  });
+
+  const typed = new Typed('.hero-title', {
+    strings: ['Shivam Tiwari'],
+    typeSpeed: 100,
   });
 });
 
